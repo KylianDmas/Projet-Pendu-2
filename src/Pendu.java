@@ -96,7 +96,7 @@ public class Pendu extends Application {
     private Scene laScene(){
         BorderPane fenetre = new BorderPane();
         fenetre.setTop(this.titre());
-        fenetre.setCenter(this.panelCentral);
+        fenetre.setCenter(this.modeAccueil());
         return new Scene(fenetre, 800, 1000);
     }
 
@@ -176,23 +176,26 @@ public class Pendu extends Application {
         }
     }
 
-    public void modeAccueil(){
+    public BorderPane modeAccueil(){
         // A implementer
         this.panelCentral = new BorderPane(); 
+        VBox vbb = new VBox();
         Button button1 = new Button("Lancer une partie");
+        vbb.getChildren().add(button1);
         button1.setOnAction(new ControleurLancerPartie(modelePendu, this));
         this.panelCentral.setTop(button1);
 
         VBox vb = new VBox();
-        RadioButton rb1 = new RadioButton(String.valueOf(MotMystere.FACILE));
-        RadioButton rb2 = new RadioButton(String.valueOf(MotMystere.MOYEN));
-        RadioButton rb3 = new RadioButton(String.valueOf(MotMystere.DIFFICILE));
-        RadioButton rb4 = new RadioButton(String.valueOf(MotMystere.EXPERT));
+        RadioButton rb1 = new RadioButton("FACILE");
+        RadioButton rb2 = new RadioButton("MOYEN");
+        RadioButton rb3 = new RadioButton("DIFFICILE");
+        RadioButton rb4 = new RadioButton("EXPERT");
 
         vb.getChildren().addAll(rb1, rb2, rb3, rb4);
         TitledPane tp = new TitledPane("Niveau de difficulté", vb);
-
-        this.panelCentral.setCenter(tp);
+        vbb.getChildren().add(tp);
+        this.panelCentral.setCenter(vbb);
+        return this.panelCentral;
     }
     
     public void modeJeu(){
@@ -256,7 +259,6 @@ public class Pendu extends Application {
     public void start(Stage stage) {
         stage.setTitle("IUTEAM'S - La plateforme de jeux de l'IUTO");
         stage.setScene(this.laScene());
-        this.modeAccueil();
         stage.show();
     }
 
