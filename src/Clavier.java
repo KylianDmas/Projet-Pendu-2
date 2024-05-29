@@ -28,6 +28,7 @@ public class Clavier extends TilePane{
     public Clavier(String touches, EventHandler<ActionEvent> actionTouches) {
         // A implémenter
         super();
+        this.clavier = new ArrayList<>();
         for(char c: touches.toCharArray()){
             Button bouton = new Button(String.valueOf(c));
             bouton.setOnAction(actionTouches);

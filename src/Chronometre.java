@@ -31,6 +31,7 @@ public class Chronometre extends Text{
      */
     public Chronometre(){
         // A implémenter
+        
     }
 
     /**
@@ -40,6 +41,7 @@ public class Chronometre extends Text{
      */
     public void setTime(long tempsMillisec){
         // A implémenter
+        this.setText(Long.toString(tempsMillisec));
     }
 
     /**
@@ -47,6 +49,7 @@ public class Chronometre extends Text{
      */
     public void start(){
         // A implémenter
+
     }
 
     /**
@@ -54,6 +57,7 @@ public class Chronometre extends Text{
      */
     public void stop(){
         // A implémenter
+
     }
 
     /**
@@ -61,5 +65,6 @@ public class Chronometre extends Text{
      */
     public void resetTime(){
         // A implémenter
+        this = new Text(0);
     }
 }

@@ -88,6 +88,7 @@ public class Pendu extends Application {
         this.lesImages = new ArrayList<Image>();
         this.chargerImages("./img");
         // A terminer d'implementer
+         
     }
 
     /**
@@ -198,8 +199,19 @@ public class Pendu extends Application {
         return this.panelCentral;
     }
     
-    public void modeJeu(){
+    public BorderPane modeJeu(){
         // A implementer
+        this.panelCentral = new BorderPane();
+        VBox vb = new VBox();
+        this.clavier = new Clavier("abcdefghijklmnopqrstuvwxyz", new ControleurLettres(modelePendu, this));
+        this.pg = new ProgressBar(modelePendu.getMotATrouve().length());
+        vb.getChildren().addAll(motCrypte, dessin, pg, clavier);
+        panelCentral.setLeft(vb);
+        VBox vb2 = new VBox();
+        vb2.getChildren().addAll(leNiveau, chrono, bJouer);
+        panelCentral.setRight(vb2);
+        return this.panelCentral;
+
     }
     
     public void modeParametres(){
@@ -209,13 +221,21 @@ public class Pendu extends Application {
     /** lance une partie */
     public void lancePartie(){
         // A implementer
+        this.modeJeu();
+
     }
 
     /**
      * raffraichit l'affichage selon les données du modèle
      */
     public void majAffichage(){
-        // A implementer
+        String mot = "";
+        for (String lettre : modelePendu.getLettresEssayees()){
+            if(modelePendu.getMotATrouve().contains(lettre)){
+                mot+=lettre;
+            }
+        }
+
     }
 
     /**
@@ -236,18 +256,21 @@ public class Pendu extends Application {
     public Alert popUpReglesDuJeu(){
         // A implementer
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Regles du jeu");
         return alert;
     }
     
     public Alert popUpMessageGagne(){
         // A implementer
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);        
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);    
+        alert.setTitle("Felicitations");    
         return alert;
     }
     
     public Alert popUpMessagePerdu(){
         // A implementer    
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("Nullos");
         return alert;
     }
 
