@@ -203,8 +203,10 @@ public class Pendu extends Application {
         // A implementer
         this.panelCentral = new BorderPane();
         VBox vb = new VBox();
+        this.dessin = new ImageView("file: img/pendu0.png");
         this.clavier = new Clavier("abcdefghijklmnopqrstuvwxyz", new ControleurLettres(modelePendu, this));
         this.pg = new ProgressBar(modelePendu.getMotATrouve().length());
+        this.motCrypte.setText(modelePendu.getMotCrypte());
         vb.getChildren().addAll(motCrypte, dessin, pg, clavier);
         panelCentral.setLeft(vb);
         VBox vb2 = new VBox();
