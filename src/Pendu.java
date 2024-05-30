@@ -181,16 +181,21 @@ public class Pendu extends Application {
         // A implementer
         this.panelCentral = new BorderPane(); 
         VBox vbb = new VBox();
-        Button button1 = new Button("Lancer une partie");
-        vbb.getChildren().add(button1);
-        button1.setOnAction(new ControleurLancerPartie(modelePendu, this));
-        this.panelCentral.setTop(button1);
+        bJouer = new Button("Lancer une partie");
+        bJouer.setOnAction(new ControleurLancerPartie(modelePendu, this));
+        vbb.getChildren().add(bJouer);
+        this.panelCentral.setTop(bJouer);
 
         VBox vb = new VBox();
+        ToggleGroup group = new ToggleGroup();
         RadioButton rb1 = new RadioButton("FACILE");
         RadioButton rb2 = new RadioButton("MOYEN");
         RadioButton rb3 = new RadioButton("DIFFICILE");
         RadioButton rb4 = new RadioButton("EXPERT");
+        rb1.setToggleGroup(group);
+        rb2.setToggleGroup(group);
+        rb3.setToggleGroup(group);
+        rb4.setToggleGroup(group);
 
         vb.getChildren().addAll(rb1, rb2, rb3, rb4);
         TitledPane tp = new TitledPane("Niveau de difficulté", vb);
@@ -199,20 +204,23 @@ public class Pendu extends Application {
         return this.panelCentral;
     }
     
-    public BorderPane modeJeu(){
+    public void modeJeu(){
         // A implementer
-        this.panelCentral = new BorderPane();
+        BorderPane pagejeu = new BorderPane();
         VBox vb = new VBox();
-        this.dessin = new ImageView("file: img/pendu0.png");
+        this.dessin = new ImageView("file:img/pendu0.png");
         this.clavier = new Clavier("abcdefghijklmnopqrstuvwxyz", new ControleurLettres(modelePendu, this));
         this.pg = new ProgressBar(modelePendu.getMotATrouve().length());
-        this.motCrypte.setText(modelePendu.getMotCrypte());
-        vb.getChildren().addAll(motCrypte, dessin, pg, clavier);
-        panelCentral.setLeft(vb);
+        Label lmot = new Label(modelePendu.getMotCrypte());
+        vb.getChildren().addAll(lmot, dessin, pg, clavier);
+        pagejeu.setLeft(vb);
         VBox vb2 = new VBox();
-        vb2.getChildren().addAll(leNiveau, chrono, bJouer);
-        panelCentral.setRight(vb2);
-        return this.panelCentral;
+        this.chrono = new Chronometre();
+        bJouer.setText("Nouveau mot");
+        /*Text tlvl = this.leNiveau; */
+        vb2.getChildren().addAll(chrono, bJouer);
+        pagejeu.setRight(vb2);
+        this.panelCentral.setCenter(pagejeu);
 
     }
     
@@ -231,13 +239,7 @@ public class Pendu extends Application {
      * raffraichit l'affichage selon les données du modèle
      */
     public void majAffichage(){
-        String mot = "";
-        for (String lettre : modelePendu.getLettresEssayees()){
-            if(modelePendu.getMotATrouve().contains(lettre)){
-                mot+=lettre;
-            }
-        }
-
+        modelePendu.ge
     }
 
     /**

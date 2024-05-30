@@ -65,6 +65,6 @@ public class Chronometre extends Text{
      */
     public void resetTime(){
         // A implémenter
-        this = new Text(0);
+        actionTemps.reset();
     }
 }

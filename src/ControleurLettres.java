@@ -23,6 +23,8 @@ public class ControleurLettres implements EventHandler<ActionEvent> {
      */
     ControleurLettres(MotMystere modelePendu, Pendu vuePendu){
         // A implémenter
+        this.modelePendu = modelePendu;
+        this.vuePendu = vuePendu;
     }
 
     /**
@@ -33,5 +35,12 @@ public class ControleurLettres implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent actionEvent) {
         // A implémenter
+        Button bouton = (Button)actionEvent.getTarget();
+        modelePendu.essaiLettre(bouton.getText().charAt(0));
+        vuePendu.majAffichage();
+        if (modelePendu.gagne()){this.vuePendu.popUpMessageGagne().show();}
+        if (modelePendu.perdu()){this.vuePendu.popUpMessagePerdu().show();}
+
+
     }
 }
