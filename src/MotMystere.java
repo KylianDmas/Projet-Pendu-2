@@ -1,4 +1,5 @@
 import java.util.Set;
+import java.util.Random;
 import java.util.HashSet;
 
 /**
@@ -43,11 +44,15 @@ public class MotMystere {
     /**
      * le nombre d'erreurs encore possibles
      */
-    private int nbErreursRestantes;
+    public int nbErreursRestantes;
     /**
      * le nombre total de tentatives autorisées
      */
     private int nbEerreursMax;
+    /**
+     * Pour Clavier
+     */
+    private Clavier clavier;
     /**
      * dictionnaire dans lequel on choisit les mots
      */
@@ -60,9 +65,10 @@ public class MotMystere {
      * @param niveau niveau du jeu
      * @param nbErreursMax le nombre total d'essais autorisés
      */
-    public MotMystere(String motATrouver, int niveau, int nbErreursMax) {
+    public MotMystere(String motATrouver, int niveau, int nbErreursMax, Clavier clavier) {
         super();
-        this.initMotMystere(motATrouver, niveau, nbErreursMax);
+        this.initialiserJeu(motATrouver, niveau, nbErreursMax);
+        this.clavier = clavier;
     }
 
     /**
@@ -74,57 +80,83 @@ public class MotMystere {
      * @param niveau niveau initial de jeu
      * @param nbErreursMax le nombre total d'essais autorisés
      */
-    public MotMystere(String nomFichier, int longMin, int longMax, int niveau, int nbErreursMax) {
+    public MotMystere(String nomFichier, int longMin, int longMax, int niveau, int nbErreursMax, Clavier clavier) {
         super();
         this.dict = new Dictionnaire(nomFichier,longMin,longMax);
         String motATrouver = dict.choisirMot();
-        this.initMotMystere(motATrouver, niveau, nbErreursMax);
+        this.initialiserJeu(motATrouver, niveau, nbErreursMax);
+        this.clavier = clavier;
     }
 
-    /**
-     * initialisation du jeu
+        /**
+     * Initialisation du jeu
      * @param motATrouver le mot à trouver
      * @param niveau le niveau de jeu
-     * @param nbErreursMax  le nombre total d'essais autorisés
+     * @param nbErreursMax le nombre total d'essais autorisés
      */
-    private void initMotMystere(String motATrouver, int niveau, int nbErreursMax){
-        this.niveau =niveau;
-        this.nbEssais=0;
+    private void initialiserJeu(String motATrouver, int niveau, int nbErreursMax) {
+        this.niveau = niveau;
+        this.nbEssais = 0;
         this.motATrouver = Dictionnaire.sansAccents(motATrouver).toUpperCase();
         this.motCrypte = "";
         this.lettresEssayees = new HashSet<>();
 
-        nbLettresRestantes=0;
+        this.nbLettresRestantes = this.motATrouver.length();
+        this.masquerMot();
+        this.nbEerreursMax = nbErreursMax;
+        this.nbErreursRestantes = nbErreursMax;
         
-        if (niveau == MotMystere.EXPERT || niveau == MotMystere.DIFFICILE){
-            motCrypte = "*"; // premiere lettre cachée
-            this.nbLettresRestantes+=1;
+        switch (this.niveau) {
+            case FACILE:
+                this.devoilerLettresAleatoires(3);
+                break;
+            case MOYEN:
+                this.devoilerLettresAleatoires(2);
+                break;
+            case DIFFICILE:
+                this.devoilerLettresAleatoires(1);
+                break;
+            case EXPERT:
+                break;
+            default:
+                break;
         }
-        else{
-            motCrypte += this.motATrouver.charAt(0); // premiere lettre révélée
-        }
+    }
+
+    /**
+     * Dévoile un nombre donné de lettres aléatoires
+     * @param nb le nombre de lettres à dévoiler
+     */
+    private void devoilerLettresAleatoires(int nb) {
+        int lettresDevoilees = 0;
+        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ-";
+        Random random = new Random();
         
-        for (int i=1; i<motATrouver.length()-1; i++){
-            char lettre = this.motATrouver.charAt(i);
-            if (this.niveau == MotMystere.EXPERT || Character.isAlphabetic(lettre)){
-                motCrypte += "*"; // lettre cachée
-                this.nbLettresRestantes += 1;
-            }   
-            else{
-                motCrypte += lettre; // lettre révélée si c'est un trait d'union ET qu'on n'est pas en mode Expert
+        while (lettresDevoilees < nb) {
+            int indice = random.nextInt(alphabet.length());
+            char lettre = alphabet.charAt(indice);
+            
+            if (devoilerLettre(lettre) > 0) {
+                lettresDevoilees++;
+                this.lettresEssayees.add(String.valueOf(lettre));
             }
         }
         
-        if (niveau != MotMystere.FACILE){ // dernière lettre révélée
-            motCrypte += "*";
-            this.nbLettresRestantes += 1;
+        System.out.println(clavier);
+        if (clavier != null) {
+            System.out.println(String.join("", this.lettresEssayees));
+            this.clavier.desactiveTouches(String.join("", this.lettresEssayees));
         }
-        else{
-            motCrypte += this.motATrouver.charAt(motATrouver.length()-1);
-            // dernière lettre cachée
-        }
-        this.nbEerreursMax = nbErreursMax;
-         this.nbErreursRestantes = nbErreursMax;
+        
+        this.masquerMot();
+    }
+
+    /**
+     * Définit le clavier à utiliser
+     * @param clavier l'objet Clavier à utiliser
+     */
+    public void definirClavier(Clavier clavier) {
+        this.clavier = clavier;
     }
 
     /**
@@ -145,14 +177,14 @@ public class MotMystere {
      * @param motATrouver le nouveau mot à trouver
      */
     public void setMotATrouver(String motATrouver) {
-        this.initMotMystere(motATrouver, this.niveau, this.nbEerreursMax);
+        this.initialiserJeu(motATrouver, this.niveau, this.nbEerreursMax);
     }
 
     /**
      * Réinitialise le jeu avec un nouveau mot à trouver choisi au hasard dans le dictionnaire
      */
     public void setMotATrouver() {
-        this.initMotMystere(this.dict.choisirMot(), this.niveau, this.nbEerreursMax);
+        this.initialiserJeu(this.dict.choisirMot(), this.niveau, this.nbEerreursMax);
     }
 
     /**
@@ -220,30 +252,54 @@ public class MotMystere {
     }
 
     /**
+     * Dévoile une lettre et met à jour le nombre d'erreurs restantes
+     * @param lettre la lettre à révéler
+     * @return le nombre de nouvelles lettres révélées
+     */
+    public int devoilerLettre(char lettre) {
+        int nouvellesDecouvertes = 0;
+        char[] motTemporaire = this.motCrypte.toCharArray();
+        for (int index = 0; index < this.motATrouver.length(); index++) {
+            if (this.motATrouver.charAt(index) == lettre && this.motCrypte.charAt(index) == '*') {
+                nouvellesDecouvertes++;
+                motTemporaire[index] = lettre;
+            }
+        }
+        this.motCrypte = String.valueOf(motTemporaire);
+        this.nbLettresRestantes -= nouvellesDecouvertes;
+        return nouvellesDecouvertes;
+    }
+
+    /**
+     * Crypte le mot à trouver en masquant les lettres non devinées
+     */
+    public void masquerMot() {
+        char[] motCache = new char[this.motATrouver.length()];
+        for (int index = 0; index < this.motATrouver.length(); index++) {
+            if (this.lettresEssayees.contains(String.valueOf(this.motATrouver.charAt(index)))) {
+                motCache[index] = this.motATrouver.charAt(index);
+            } else {
+                motCache[index] = '*';
+            }
+        }
+        this.motCrypte = String.valueOf(motCache);
+    }
+
+    /**
      * permet au joueur d'essayer une lettre
      * @param lettre la lettre essayée par le joueur
      * @return le nombre de fois où la lettre apparait dans le mot à trouver
      */
     public int essaiLettre(char lettre){
-        int nbNouvelles = 0;
-        char[] aux = this.motCrypte.toCharArray();
-        for (int i=0; i<this.motATrouver.length(); i++){
-            if (this.motATrouver.charAt(i) == lettre && this.motCrypte.charAt(i) == '*'){
-                nbNouvelles += 1;
-                aux[i] = lettre;
-            }
-        }
-        this.motCrypte = String.valueOf(aux);
-        this.nbLettresRestantes -= nbNouvelles;
-        this.lettresEssayees.add(lettre+"");
-        // Le nombre d'essais augmente de 1
         this.nbEssais += 1;
-        // Si aucune lettre n'a été trouvée, le nombre d'erreurs restante diminue de 1
-        if (nbNouvelles == 0){
-            this.nbErreursRestantes-=1;
-        }
-        return nbNouvelles;
+        int nbNewLetter = this.devoilerLettre(lettre);
+        this.lettresEssayees.add(lettre+"");
+        this.masquerMot();
+        if (nbNewLetter == 0){
+            this.nbErreursRestantes-= 1;
     }
+    return nbNewLetter;
+   }
 
     /**
      * @return une chaine de caractère donnant l'état du jeu

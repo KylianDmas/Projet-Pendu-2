@@ -88,6 +88,8 @@ public class Pendu extends Application {
         this.lesImages = new ArrayList<Image>();
         this.chargerImages("./img");
         // A terminer d'implementer
+        this.chrono = new Chronometre();
+        this.modelePendu.nbErreursRestantes = 0;
          
     }
 
