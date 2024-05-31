@@ -1,6 +1,5 @@
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 
 /**
@@ -35,12 +34,12 @@ public class ControleurLettres implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent actionEvent) {
         // A implémenter
+        if (this.modelePendu.gagne() || this.modelePendu.perdu()){return;}
+
         Button bouton = (Button)actionEvent.getTarget();
+
         modelePendu.essaiLettre(bouton.getText().charAt(0));
+        bouton.setDisable(true);
         vuePendu.majAffichage();
-        if (modelePendu.gagne()){this.vuePendu.popUpMessageGagne().show();}
-        if (modelePendu.perdu()){this.vuePendu.popUpMessagePerdu().show();}
-
-
     }
 }

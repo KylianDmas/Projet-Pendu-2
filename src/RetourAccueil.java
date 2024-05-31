@@ -1,16 +1,10 @@
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.scene.control.ButtonType;
-import java.util.Optional;
 
 /**
  * Contrôleur à activer lorsque l'on clique sur le bouton Accueil
  */
 public class RetourAccueil implements EventHandler<ActionEvent> {
-    /**
-     * modèle du jeu
-     */
-    private MotMystere modelePendu;
     /**
      * vue du jeu
      **/
@@ -20,8 +14,9 @@ public class RetourAccueil implements EventHandler<ActionEvent> {
      * @param modelePendu modèle du jeu
      * @param vuePendu vue du jeu
      */
-    public RetourAccueil(MotMystere modelePendu, Pendu vuePendu) {
+    public RetourAccueil(Pendu vuePendu) {
         // A implémenter
+        this.vuePendu = vuePendu;
     }
 
 
@@ -32,6 +27,6 @@ public class RetourAccueil implements EventHandler<ActionEvent> {
     @Override
     public void handle(ActionEvent actionEvent) {
         // A implémenter
-        
+        this.vuePendu.modeAccueil();
     }
 }
